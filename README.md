@@ -1,4 +1,6 @@
 # algorithm-master
+
+
 Для работы программы требуются следующие библиотеки, для их установки пропишите внутри ide, в консоль, следующие команды:
 ---pip install openpyxl peewee psycopg2  pytest pywin32 telebot
 ---pip install --force-reinstall -v "pywin32===303"

@@ -5,19 +5,19 @@
         1)---pip install openpyxl peewee psycopg2  pytest pywin32 telebot
         2)---pip install --force-reinstall -v "pywin32===303"
 
-после успешной установки библиотек в вашу программу, сделайте следующее:
-	0. Скачайте и установите на Ваш компьютер СУБД Postgresql(для ОС:
-		-Windows (x86-64(32-битная не поддерживается)) (https://sbp.enterprisedb.com/getfile.jsp?fileid=1258792)
-		-Linux(x86-64) (https://www.postgresql.org/download/)
-		-Linux(x86-32) (https://www.postgresql.org/download/)
-		-Mac OS X (https://sbp.enterprisedb.com/getfile.jsp?fileid=1258776)
-	1. Первым делом запускается файл создания модели в базе данных. Перейдите в файл "peewee_db_test.py", с помощью колесика мыши или стрелок спуститесь вниз, до конца кода,
-	   там будут две закоментированные строчик кода.
-	   Одна из них для создания таблиц в базе данных: "db.create_tables([User, Group, Hour, Date, Teacher, Cabinet, Name_lesson, Schedule])", раскомментируйте её удалив "#", после чего запустите файл.
-	   Вторая строчка для удаления таблиц в базе данных(используйте её с умом, если она будет не закомментированна, удалит Вашу бд, и вы утеряете все данные), для сохранности старайтесь не удалять "#" перед строчкой
- 	   "db.drop_tables([User, Group, Hour, Date, Teacher, Cabinet, Name_lesson, Schedule])".
-		P.S. имя базы данных находится на 3 строчке первым аргументом после "PostgresqlDatabase". Так же у вас должна уже быть создана база данных внутри СУБД Postgresql. Имя созданной базы данных вставьте вместо "chat_bot_db"
-		     на 3 строчке файла ("peewee_db_test.py"):
+		после успешной установки библиотек в вашу программу, сделайте следующее:
+		0. Скачайте и установите на Ваш компьютер СУБД Postgresql(для ОС:
+			-Windows (x86-64(32-битная не поддерживается)) (https://sbp.enterprisedb.com/getfile.jsp?fileid=1258792)
+			-Linux(x86-64) (https://www.postgresql.org/download/)
+			-Linux(x86-32) (https://www.postgresql.org/download/)
+			-Mac OS X (https://sbp.enterprisedb.com/getfile.jsp?fileid=1258776)
+			1. Первым делом запускается файл создания модели в базе данных. Перейдите в файл "peewee_db_test.py", с помощью колесика мыши или стрелок спуститесь вниз, до конца кода,
+	   	там будут две закоментированные строчик кода.
+	   	Одна из них для создания таблиц в базе данных: "db.create_tables([User, Group, Hour, Date, Teacher, Cabinet, Name_lesson, Schedule])", раскомментируйте её удалив "#", после чего запустите файл.
+	   	Вторая строчка для удаления таблиц в базе данных(используйте её с умом, если она будет не закомментированна, удалит Вашу бд, и вы утеряете все данные), для сохранности старайтесь не удалять "#" перед строчкой
+ 	   	"db.drop_tables([User, Group, Hour, Date, Teacher, Cabinet, Name_lesson, Schedule])".
+			P.S. имя базы данных находится на 3 строчке первым аргументом после "PostgresqlDatabase". Так же у вас должна уже быть создана база данных внутри СУБД Postgresql. Имя созданной базы данных вставьте вместо "chat_bot_db"
+		     	на 3 строчке файла ("peewee_db_test.py"):
 		
 		     db = PostgresqlDatabase('ИМЯ_ВАШЕЙ_БД', user='postgres', password='ПАРОЛЬ_ПРИ_УСТАНОВКЕ_ПОСТГРЕ',host='localhost', port=ПОРТ(обычно стоит 5432))
 

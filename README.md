@@ -2,8 +2,8 @@
 
 
 Для работы программы требуются следующие библиотеки, для их установки пропишите внутри ide, в консоль, следующие команды:
----pip install openpyxl peewee psycopg2  pytest pywin32 telebot
----pip install --force-reinstall -v "pywin32===303"
+1)---pip install openpyxl peewee psycopg2  pytest pywin32 telebot
+2)---pip install --force-reinstall -v "pywin32===303"
 
 после успешной установки библиотек в вашу программу, сделайте следующее:
 	0. Скачайте и установите на Ваш компьютер СУБД Postgresql(для ОС:

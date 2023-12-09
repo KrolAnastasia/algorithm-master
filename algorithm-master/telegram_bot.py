@@ -5,12 +5,12 @@ from write_db import *
 from peewee import *
 
 bot = telebot.TeleBot(config.TOKEN)
-#photoSed = open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb')
-#photoHappy = open('C:/Users/Anastasia/Desktop/algorithm-master/happy.jpg', 'rb')
+photoSed = 'sed.jpg'
+photoHappy = 'happy.jpg'
 
 @bot.message_handler(commands=['start'])
 def welcome(message):
-    bot.send_message(message.chat.id,f"Добро пожаловать, {message.from_user.first_name}!".format(message.from_user, bot.get_me()),
+    bot.send_message(message.chat.id, f"Добро пожаловать, {message.from_user.first_name}!".format(message.from_user, bot.get_me()),
                      parse_mode='html')
     create_user(message.from_user.id,message.from_user.first_name)
     bot.send_message(message.chat.id, f"Пожалуйста, {message.from_user.first_name}, скажи, из какой ты группы?",
@@ -398,7 +398,7 @@ def callback_inline(call):
                              para += f"        {schedule_day_week_db[i][y]}  \n"
                          else:
                              continue
-                 bot.send_message(call.message.chat.id, para + "\n", parse_mode='html',reply_markup=murkup_quit_home_menu)
+                 bot.send_message(call.message.chat.id, para + "\n", parse_mode='html', reply_markup=murkup_quit_home_menu)
             elif call.data == 'sat_ne_chet':
                  schedule_day_week_db = []
                  schedule_day_week_db = schedule_day_week('СУББОТА', '2', call.from_user.id)
@@ -439,14 +439,18 @@ def quit_name_group(message):
         quit_parity_non = types.KeyboardButton('Вторая')
         name_frined_group = message.text
         murkup_parity_quit.add(quit_parity_chet, quit_parity_non)
+
         bot.send_message(message.from_user.id, 'Пожалуйста, выбери неделю', parse_mode='html',
                          reply_markup=murkup_parity_quit)
         bot.register_next_step_handler(message,quit_chet,name_frined_group)
 
     else:
+        murkup_quit_home_menu = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        quit_menu = types.KeyboardButton('Меню')
+        murkup_quit_home_menu.add(quit_menu)
         bot.send_message(message.chat.id,
                          "К сожалению, группы твоего (по-)друга(-и) не существует, проверь пожалуйста"
-                         "вдруг была какая-то очепятка╰(*°▽°*)╯", parse_mode='html', reply_markup=murkup_parity_quit)
+                         "вдруг была какая-то очепятка╰(*°▽°*)╯", parse_mode='html', reply_markup=murkup_quit_home_menu)
 
 
 def quit_chet(message,name_group):
@@ -528,7 +532,7 @@ def quit_rezult(message, name_group):
                                               f' а твой друг закончит в '
                                               f'<b><u>{hour_group_friend_last_hour[-1]}</u></b>.\n'
                                               f'Не грустите, может в другой раз😎', parse_mode='html')
-            bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu) ############################################
+            bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'), reply_markup=murkup_quit_home_menu) ############################################
         elif len(hour_group_friend_last_hour) == 0 and len(hour_group_user_last_hour) == 0:
             bot.send_message(message.chat.id, f'Сегодня ни ты, ни твой друг не учитесь!\n'
                                               f'🎉🎉🎉🎉🎉', parse_mode='html',
@@ -538,7 +542,7 @@ def quit_rezult(message, name_group):
                                               f'<b><u>{hour_group_user_last_hour[-1]}</u></b>,'
                                               f' а твой друг сегодня не учится.\n'
                                               f'Не грустите, может в другой раз😎', parse_mode='html')
-            bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'),
+            bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
                              reply_markup=murkup_quit_home_menu)  ###################################
         elif len(hour_group_friend_last_hour) > 0 and len(hour_group_user_last_hour) > 0:
             if hour_group_user_last_hour[-1] == hour_group_friend_last_hour[-1]:
@@ -548,13 +552,13 @@ def quit_rezult(message, name_group):
                                                       f'<b><u>{hour_group_friend_first_hour[0]}</u></b>, а закончите в '
                                                       f'<b><u>{hour_group_friend_last_hour[-1]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/happy.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ##########
+                    bot.send_photo(message.chat.id, photo=open(photoHappy, 'rb'), reply_markup=murkup_quit_home_menu)  ##########
                 else:
                     bot.send_message(message.chat.id, f'Да, вы сможете уйти вместе с другом. Но пойти на'
                                                       f' уроки вместе не сможете. Вы закончите в'
                                                       f' <b><u>{hour_group_friend_last_hour[-1]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/happy.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoHappy, 'rb'), reply_markup=murkup_quit_home_menu)  ########
             else:
                 if hour_group_user_first_hour[0] == hour_group_friend_first_hour[0]:
                     bot.send_message(message.chat.id,
@@ -562,16 +566,12 @@ def quit_rezult(message, name_group):
                                      f' Но пойти на уроки вместе можете, ведь начинаете вы в '
                                      f'<b><u>{hour_group_friend_first_hour[0]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ############
+                    bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'), reply_markup=murkup_quit_home_menu)  ############
                 else:
                     bot.send_message(message.chat.id, f'К сожалению, вы не сможете уйти вместе и пойти вместе с другом.',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ##########
+                    bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'), reply_markup=murkup_quit_home_menu)  ##########
     elif message.text == 'Вт-1':
-        hour_group_user_last_hour = []
-        hour_group_friend_last_hour = []
-        hour_group_user_first_hour = []
-        hour_group_friend_first_hour = []
         hour_group_user_last_hour = times_db('ВТОРНИК', '1', message.from_user.id)
         hour_group_friend_last_hour = times_db_friend('ВТОРНИК', '1', name_group)
         hour_group_user_first_hour = times_db_first('ВТОРНИК', '1', message.from_user.id)
@@ -623,7 +623,8 @@ def quit_rezult(message, name_group):
                                               f' а твой друг закончит в '
                                               f'<b><u>{hour_group_friend_last_hour[-1]}</u></b>.\n'
                                               f'Не грустите, может в другой раз😎', parse_mode='html')
-            bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+            bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                           reply_markup=murkup_quit_home_menu)  ############################################
         elif len(hour_group_friend_last_hour) == 0 and len(hour_group_user_last_hour) == 0:
             bot.send_message(message.chat.id, f'Сегодня ни ты, ни твой друг не учитесь!\n'
                                               f'🎉🎉🎉🎉🎉', parse_mode='html',
@@ -633,22 +634,25 @@ def quit_rezult(message, name_group):
                                               f'<b><u>{hour_group_user_last_hour[-1]}</u></b>,'
                                               f' а твой друг сегодня не учится.\n'
                                               f'Не грустите, может в другой раз😎', parse_mode='html')
-            bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+            bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                           reply_markup=murkup_quit_home_menu)  ###################################
         elif len(hour_group_friend_last_hour) > 0 and len(hour_group_user_last_hour) > 0:
             if hour_group_user_last_hour[-1] == hour_group_friend_last_hour[-1]:
                 if hour_group_user_first_hour[0] == hour_group_friend_first_hour[0]:
                     bot.send_message(message.chat.id, f'Да, вы сможете уйти вместе с другом. Но и пойти на'
-                                                      f' уроки вы сможете вместе, ведь начнете в '
+                                                      f' уроки вы сможете вместе, ведь начнете вы в '
                                                       f'<b><u>{hour_group_friend_first_hour[0]}</u></b>, а закончите в '
                                                       f'<b><u>{hour_group_friend_last_hour[-1]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/happy.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoHappy, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ##########
                 else:
                     bot.send_message(message.chat.id, f'Да, вы сможете уйти вместе с другом. Но пойти на'
                                                       f' уроки вместе не сможете. Вы закончите в'
                                                       f' <b><u>{hour_group_friend_last_hour[-1]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/happy.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoHappy, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ########
             else:
                 if hour_group_user_first_hour[0] == hour_group_friend_first_hour[0]:
                     bot.send_message(message.chat.id,
@@ -656,16 +660,15 @@ def quit_rezult(message, name_group):
                                      f' Но пойти на уроки вместе можете, ведь начинаете вы в '
                                      f'<b><u>{hour_group_friend_first_hour[0]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ############
                 else:
-                    bot.send_message(message.chat.id, f'К сожалению, вы не сможете уйти вместе и пойти вместе с другом.',
+                    bot.send_message(message.chat.id,
+                                     f'К сожалению, вы не сможете уйти вместе и пойти вместе с другом.',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ########## ########
     elif message.text == 'Ср-1':
-        hour_group_user_last_hour = []
-        hour_group_friend_last_hour = []
-        hour_group_user_first_hour = []
-        hour_group_friend_first_hour = []
         hour_group_user_last_hour = times_db('СРЕДА', '1', message.from_user.id)
         hour_group_friend_last_hour = times_db_friend('СРЕДА', '1', name_group)
         hour_group_user_first_hour = times_db_first('СРЕДА', '1', message.from_user.id)
@@ -717,7 +720,8 @@ def quit_rezult(message, name_group):
                                               f' а твой друг закончит в '
                                               f'<b><u>{hour_group_friend_last_hour[-1]}</u></b>.\n'
                                               f'Не грустите, может в другой раз😎', parse_mode='html')
-            bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+            bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                           reply_markup=murkup_quit_home_menu)  ############################################
         elif len(hour_group_friend_last_hour) == 0 and len(hour_group_user_last_hour) == 0:
             bot.send_message(message.chat.id, f'Сегодня ни ты, ни твой друг не учитесь!\n'
                                               f'🎉🎉🎉🎉🎉', parse_mode='html',
@@ -727,22 +731,25 @@ def quit_rezult(message, name_group):
                                               f'<b><u>{hour_group_user_last_hour[-1]}</u></b>,'
                                               f' а твой друг сегодня не учится.\n'
                                               f'Не грустите, может в другой раз😎', parse_mode='html')
-            bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+            bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                           reply_markup=murkup_quit_home_menu)  ###################################
         elif len(hour_group_friend_last_hour) > 0 and len(hour_group_user_last_hour) > 0:
             if hour_group_user_last_hour[-1] == hour_group_friend_last_hour[-1]:
                 if hour_group_user_first_hour[0] == hour_group_friend_first_hour[0]:
                     bot.send_message(message.chat.id, f'Да, вы сможете уйти вместе с другом. Но и пойти на'
-                                                      f' уроки, вы сможете вместе, ведь начинаете вы в '
+                                                      f' уроки вы сможете вместе, ведь начнете вы в '
                                                       f'<b><u>{hour_group_friend_first_hour[0]}</u></b>, а закончите в '
                                                       f'<b><u>{hour_group_friend_last_hour[-1]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/happy.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoHappy, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ##########
                 else:
                     bot.send_message(message.chat.id, f'Да, вы сможете уйти вместе с другом. Но пойти на'
                                                       f' уроки вместе не сможете. Вы закончите в'
                                                       f' <b><u>{hour_group_friend_last_hour[-1]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/happy.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoHappy, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ########
             else:
                 if hour_group_user_first_hour[0] == hour_group_friend_first_hour[0]:
                     bot.send_message(message.chat.id,
@@ -750,16 +757,15 @@ def quit_rezult(message, name_group):
                                      f' Но пойти на уроки вместе можете, ведь начинаете вы в '
                                      f'<b><u>{hour_group_friend_first_hour[0]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ############
                 else:
-                    bot.send_message(message.chat.id, f'К сожалению, вы не сможете уйти вместе и пойти вместе с другом.',
+                    bot.send_message(message.chat.id,
+                                     f'К сожалению, вы не сможете уйти вместе и пойти вместе с другом.',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ##########
     elif message.text == 'Чт-1':
-        hour_group_user_last_hour = []
-        hour_group_friend_last_hour = []
-        hour_group_user_first_hour = []
-        hour_group_friend_first_hour = []
         hour_group_user_last_hour = times_db('ЧЕТВЕРГ', '1', message.from_user.id)
         hour_group_friend_last_hour = times_db_friend('ЧЕТВЕРГ', '1', name_group)
         hour_group_user_first_hour = times_db_first('ЧЕТВЕРГ', '1', message.from_user.id)
@@ -811,7 +817,8 @@ def quit_rezult(message, name_group):
                                               f' а твой друг закончит в '
                                               f'<b><u>{hour_group_friend_last_hour[-1]}</u></b>.\n'
                                               f'Не грустите, может в другой раз😎', parse_mode='html')
-            bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+            bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                           reply_markup=murkup_quit_home_menu)  ############################################
         elif len(hour_group_friend_last_hour) == 0 and len(hour_group_user_last_hour) == 0:
             bot.send_message(message.chat.id, f'Сегодня ни ты, ни твой друг не учитесь!\n'
                                               f'🎉🎉🎉🎉🎉', parse_mode='html',
@@ -821,22 +828,25 @@ def quit_rezult(message, name_group):
                                               f'<b><u>{hour_group_user_last_hour[-1]}</u></b>,'
                                               f' а твой друг сегодня не учится.\n'
                                               f'Не грустите, может в другой раз😎', parse_mode='html')
-            bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+            bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                           reply_markup=murkup_quit_home_menu)  ###################################
         elif len(hour_group_friend_last_hour) > 0 and len(hour_group_user_last_hour) > 0:
             if hour_group_user_last_hour[-1] == hour_group_friend_last_hour[-1]:
                 if hour_group_user_first_hour[0] == hour_group_friend_first_hour[0]:
                     bot.send_message(message.chat.id, f'Да, вы сможете уйти вместе с другом. Но и пойти на'
-                                                      f' уроки вы сможете вместе, ведь начинаете вы в '
+                                                      f' уроки вы сможете вместе, ведь начнете вы в '
                                                       f'<b><u>{hour_group_friend_first_hour[0]}</u></b>, а закончите в '
                                                       f'<b><u>{hour_group_friend_last_hour[-1]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/happy.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoHappy, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ##########
                 else:
                     bot.send_message(message.chat.id, f'Да, вы сможете уйти вместе с другом. Но пойти на'
                                                       f' уроки вместе не сможете. Вы закончите в'
                                                       f' <b><u>{hour_group_friend_last_hour[-1]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/happy.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoHappy, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ########
             else:
                 if hour_group_user_first_hour[0] == hour_group_friend_first_hour[0]:
                     bot.send_message(message.chat.id,
@@ -844,16 +854,15 @@ def quit_rezult(message, name_group):
                                      f' Но пойти на уроки вместе можете, ведь начинаете вы в '
                                      f'<b><u>{hour_group_friend_first_hour[0]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ############
                 else:
-                    bot.send_message(message.chat.id, f'К сожалению, вы не сможете уйти вместе и пойти вместе с другом.',
+                    bot.send_message(message.chat.id,
+                                     f'К сожалению, вы не сможете уйти вместе и пойти вместе с другом.',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ##########
     elif message.text == 'Пт-1':
-        hour_group_user_last_hour = []
-        hour_group_friend_last_hour = []
-        hour_group_user_first_hour = []
-        hour_group_friend_first_hour = []
         hour_group_user_last_hour = times_db('ПЯТНИЦА', '1', message.from_user.id)
         hour_group_friend_last_hour = times_db_friend('ПЯТНИЦА', '1', name_group)
         hour_group_user_first_hour = times_db_first('ПЯТНИЦА', '1', message.from_user.id)
@@ -905,7 +914,8 @@ def quit_rezult(message, name_group):
                                               f' а твой друг закончит в '
                                               f'<b><u>{hour_group_friend_last_hour[-1]}</u></b>.\n'
                                               f'Не грустите, может в другой раз😎', parse_mode='html')
-            bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+            bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                           reply_markup=murkup_quit_home_menu)  ############################################
         elif len(hour_group_friend_last_hour) == 0 and len(hour_group_user_last_hour) == 0:
             bot.send_message(message.chat.id, f'Сегодня ни ты, ни твой друг не учитесь!\n'
                                               f'🎉🎉🎉🎉🎉', parse_mode='html',
@@ -915,22 +925,25 @@ def quit_rezult(message, name_group):
                                               f'<b><u>{hour_group_user_last_hour[-1]}</u></b>,'
                                               f' а твой друг сегодня не учится.\n'
                                               f'Не грустите, может в другой раз😎', parse_mode='html')
-            bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+            bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                           reply_markup=murkup_quit_home_menu)  ###################################
         elif len(hour_group_friend_last_hour) > 0 and len(hour_group_user_last_hour) > 0:
             if hour_group_user_last_hour[-1] == hour_group_friend_last_hour[-1]:
                 if hour_group_user_first_hour[0] == hour_group_friend_first_hour[0]:
                     bot.send_message(message.chat.id, f'Да, вы сможете уйти вместе с другом. Но и пойти на'
-                                                      f' уроки вы сможете вместе, ведь начинаете в '
+                                                      f' уроки вы сможете вместе, ведь начнете вы в '
                                                       f'<b><u>{hour_group_friend_first_hour[0]}</u></b>, а закончите в '
                                                       f'<b><u>{hour_group_friend_last_hour[-1]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/happy.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoHappy, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ##########
                 else:
                     bot.send_message(message.chat.id, f'Да, вы сможете уйти вместе с другом. Но пойти на'
                                                       f' уроки вместе не сможете. Вы закончите в'
                                                       f' <b><u>{hour_group_friend_last_hour[-1]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/happy.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoHappy, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ########
             else:
                 if hour_group_user_first_hour[0] == hour_group_friend_first_hour[0]:
                     bot.send_message(message.chat.id,
@@ -938,17 +951,15 @@ def quit_rezult(message, name_group):
                                      f' Но пойти на уроки вместе можете, ведь начинаете вы в '
                                      f'<b><u>{hour_group_friend_first_hour[0]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ############
                 else:
                     bot.send_message(message.chat.id,
                                      f'К сожалению, вы не сможете уйти вместе и пойти вместе с другом.',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ##########
     elif message.text == 'Сб-1':
-        hour_group_user_last_hour = []
-        hour_group_friend_last_hour = []
-        hour_group_user_first_hour = []
-        hour_group_friend_first_hour = []
         hour_group_user_last_hour = times_db('СУББОТА', '1', message.from_user.id)
         hour_group_friend_last_hour = times_db_friend('СУББОТА', '1', name_group)
         hour_group_user_first_hour = times_db_first('СУББОТА', '1', message.from_user.id)
@@ -1000,7 +1011,8 @@ def quit_rezult(message, name_group):
                                               f' а твой друг закончит в '
                                               f'<b><u>{hour_group_friend_last_hour[-1]}</u></b>.\n'
                                               f'Не грустите, может в другой раз😎', parse_mode='html')
-            bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+            bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                           reply_markup=murkup_quit_home_menu)  ############################################
         elif len(hour_group_friend_last_hour) == 0 and len(hour_group_user_last_hour) == 0:
             bot.send_message(message.chat.id, f'Сегодня ни ты, ни твой друг не учитесь!\n'
                                               f'🎉🎉🎉🎉🎉', parse_mode='html',
@@ -1010,22 +1022,25 @@ def quit_rezult(message, name_group):
                                               f'<b><u>{hour_group_user_last_hour[-1]}</u></b>,'
                                               f' а твой друг сегодня не учится.\n'
                                               f'Не грустите, может в другой раз😎', parse_mode='html')
-            bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+            bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                           reply_markup=murkup_quit_home_menu)  ###################################
         elif len(hour_group_friend_last_hour) > 0 and len(hour_group_user_last_hour) > 0:
             if hour_group_user_last_hour[-1] == hour_group_friend_last_hour[-1]:
                 if hour_group_user_first_hour[0] == hour_group_friend_first_hour[0]:
                     bot.send_message(message.chat.id, f'Да, вы сможете уйти вместе с другом. Но и пойти на'
-                                                      f' уроки вы сможете вместе, ведь начинаете вы в '
+                                                      f' уроки вы сможете вместе, ведь начнете вы в '
                                                       f'<b><u>{hour_group_friend_first_hour[0]}</u></b>, а закончите в '
                                                       f'<b><u>{hour_group_friend_last_hour[-1]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/happy.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoHappy, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ##########
                 else:
                     bot.send_message(message.chat.id, f'Да, вы сможете уйти вместе с другом. Но пойти на'
                                                       f' уроки вместе не сможете. Вы закончите в'
                                                       f' <b><u>{hour_group_friend_last_hour[-1]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/happy.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoHappy, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ########
             else:
                 if hour_group_user_first_hour[0] == hour_group_friend_first_hour[0]:
                     bot.send_message(message.chat.id,
@@ -1033,19 +1048,17 @@ def quit_rezult(message, name_group):
                                      f' Но пойти на уроки вместе можете, ведь начинаете вы в '
                                      f'<b><u>{hour_group_friend_first_hour[0]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ############
                 else:
-                    bot.send_message(message.chat.id, f'К сожалению, вы не сможете уйти вместе и пойти вместе с другом.',
+                    bot.send_message(message.chat.id,
+                                     f'К сожалению, вы не сможете уйти вместе и пойти вместе с другом.',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
-
+                    bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ##########
 
     #вторая НЕДЕЛЯ
     elif message.text == 'Пн-2':
-        hour_group_user_last_hour = []
-        hour_group_friend_last_hour = []
-        hour_group_user_first_hour = []
-        hour_group_friend_first_hour = []
         hour_group_user_last_hour = times_db('ПОНЕДЕЛЬНИК', '2', message.from_user.id)
         hour_group_friend_last_hour = times_db_friend('ПОНЕДЕЛЬНИК', '2', name_group)
         hour_group_user_first_hour = times_db_first('ПОНЕДЕЛЬНИК', '2', message.from_user.id)
@@ -1097,7 +1110,8 @@ def quit_rezult(message, name_group):
                                               f' а твой друг закончит в '
                                               f'<b><u>{hour_group_friend_last_hour[-1]}</u></b>.\n'
                                               f'Не грустите, может в другой раз😎', parse_mode='html')
-            bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+            bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                           reply_markup=murkup_quit_home_menu)  ############################################
         elif len(hour_group_friend_last_hour) == 0 and len(hour_group_user_last_hour) == 0:
             bot.send_message(message.chat.id, f'Сегодня ни ты, ни твой друг не учитесь!\n'
                                               f'🎉🎉🎉🎉🎉', parse_mode='html',
@@ -1107,7 +1121,8 @@ def quit_rezult(message, name_group):
                                               f'<b><u>{hour_group_user_last_hour[-1]}</u></b>,'
                                               f' а твой друг сегодня не учится.\n'
                                               f'Не грустите, может в другой раз😎', parse_mode='html')
-            bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+            bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                           reply_markup=murkup_quit_home_menu)  ###################################
         elif len(hour_group_friend_last_hour) > 0 and len(hour_group_user_last_hour) > 0:
             if hour_group_user_last_hour[-1] == hour_group_friend_last_hour[-1]:
                 if hour_group_user_first_hour[0] == hour_group_friend_first_hour[0]:
@@ -1116,13 +1131,15 @@ def quit_rezult(message, name_group):
                                                       f'<b><u>{hour_group_friend_first_hour[0]}</u></b>, а закончите в '
                                                       f'<b><u>{hour_group_friend_last_hour[-1]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/happy.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoHappy, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ##########
                 else:
                     bot.send_message(message.chat.id, f'Да, вы сможете уйти вместе с другом. Но пойти на'
                                                       f' уроки вместе не сможете. Вы закончите в'
-                                                      f' <b><u>{hour_group_friend_last_hour[-1]}</u></b>',
+                                                      f' <b><u>{hour_group_friend_last_hour[-1]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/happy.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoHappy, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ########
             else:
                 if hour_group_user_first_hour[0] == hour_group_friend_first_hour[0]:
                     bot.send_message(message.chat.id,
@@ -1130,16 +1147,15 @@ def quit_rezult(message, name_group):
                                      f' Но пойти на уроки вместе можете, ведь начинаете вы в '
                                      f'<b><u>{hour_group_friend_first_hour[0]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ############
                 else:
-                    bot.send_message(message.chat.id, f'К сожалению, вы не сможете уйти вместе и пойти вместе с другом.',
+                    bot.send_message(message.chat.id,
+                                     f'К сожалению, вы не сможете уйти вместе и пойти вместе с другом.',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ##########
     elif message.text == 'Вт-2':
-        hour_group_user_last_hour = []
-        hour_group_friend_last_hour = []
-        hour_group_user_first_hour = []
-        hour_group_friend_first_hour = []
         hour_group_user_last_hour = times_db('ВТОРНИК', '2', message.from_user.id)
         hour_group_friend_last_hour = times_db_friend('ВТОРНИК', '2', name_group)
         hour_group_user_first_hour = times_db_first('ВТОРНИК', '2', message.from_user.id)
@@ -1191,7 +1207,8 @@ def quit_rezult(message, name_group):
                                               f' а твой друг закончит в '
                                               f'<b><u>{hour_group_friend_last_hour[-1]}</u></b>.\n'
                                               f'Не грустите, может в другой раз😎', parse_mode='html')
-            bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+            bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                           reply_markup=murkup_quit_home_menu)  ############################################
         elif len(hour_group_friend_last_hour) == 0 and len(hour_group_user_last_hour) == 0:
             bot.send_message(message.chat.id, f'Сегодня ни ты, ни твой друг не учитесь!\n'
                                               f'🎉🎉🎉🎉🎉', parse_mode='html',
@@ -1201,22 +1218,25 @@ def quit_rezult(message, name_group):
                                               f'<b><u>{hour_group_user_last_hour[-1]}</u></b>,'
                                               f' а твой друг сегодня не учится.\n'
                                               f'Не грустите, может в другой раз😎', parse_mode='html')
-            bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+            bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                           reply_markup=murkup_quit_home_menu)  ###################################
         elif len(hour_group_friend_last_hour) > 0 and len(hour_group_user_last_hour) > 0:
             if hour_group_user_last_hour[-1] == hour_group_friend_last_hour[-1]:
                 if hour_group_user_first_hour[0] == hour_group_friend_first_hour[0]:
                     bot.send_message(message.chat.id, f'Да, вы сможете уйти вместе с другом. Но и пойти на'
-                                                      f' уроки вы сможете вместе, ведь начинаете вы в '
+                                                      f' уроки вы сможете вместе, ведь начнете вы в '
                                                       f'<b><u>{hour_group_friend_first_hour[0]}</u></b>, а закончите в '
                                                       f'<b><u>{hour_group_friend_last_hour[-1]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/happy.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoHappy, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ##########
                 else:
                     bot.send_message(message.chat.id, f'Да, вы сможете уйти вместе с другом. Но пойти на'
                                                       f' уроки вместе не сможете. Вы закончите в'
                                                       f' <b><u>{hour_group_friend_last_hour[-1]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/happy.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoHappy, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ########
             else:
                 if hour_group_user_first_hour[0] == hour_group_friend_first_hour[0]:
                     bot.send_message(message.chat.id,
@@ -1224,16 +1244,15 @@ def quit_rezult(message, name_group):
                                      f' Но пойти на уроки вместе можете, ведь начинаете вы в '
                                      f'<b><u>{hour_group_friend_first_hour[0]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ############
                 else:
-                    bot.send_message(message.chat.id, f'К сожалению, вы не сможете уйти вместе и пойти вместе с другом.',
+                    bot.send_message(message.chat.id,
+                                     f'К сожалению, вы не сможете уйти вместе и пойти вместе с другом.',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ##########
     elif message.text == 'Ср-2':
-        hour_group_user_last_hour = []
-        hour_group_friend_last_hour = []
-        hour_group_user_first_hour = []
-        hour_group_friend_first_hour = []
         hour_group_user_last_hour = times_db('СРЕДА', '2', message.from_user.id)
         hour_group_friend_last_hour = times_db_friend('СРЕДА', '2', name_group)
         hour_group_user_first_hour = times_db_first('СРЕДА', '2', message.from_user.id)
@@ -1285,7 +1304,8 @@ def quit_rezult(message, name_group):
                                               f' а твой друг закончит в '
                                               f'<b><u>{hour_group_friend_last_hour[-1]}</u></b>.\n'
                                               f'Не грустите, может в другой раз😎', parse_mode='html')
-            bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+            bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                           reply_markup=murkup_quit_home_menu)  ############################################
         elif len(hour_group_friend_last_hour) == 0 and len(hour_group_user_last_hour) == 0:
             bot.send_message(message.chat.id, f'Сегодня ни ты, ни твой друг не учитесь!\n'
                                               f'🎉🎉🎉🎉🎉', parse_mode='html',
@@ -1295,22 +1315,25 @@ def quit_rezult(message, name_group):
                                               f'<b><u>{hour_group_user_last_hour[-1]}</u></b>,'
                                               f' а твой друг сегодня не учится.\n'
                                               f'Не грустите, может в другой раз😎', parse_mode='html')
-            bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+            bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                           reply_markup=murkup_quit_home_menu)  ###################################
         elif len(hour_group_friend_last_hour) > 0 and len(hour_group_user_last_hour) > 0:
             if hour_group_user_last_hour[-1] == hour_group_friend_last_hour[-1]:
                 if hour_group_user_first_hour[0] == hour_group_friend_first_hour[0]:
                     bot.send_message(message.chat.id, f'Да, вы сможете уйти вместе с другом. Но и пойти на'
-                                                      f' уроки вы сможете вместе, ведь начинаете вы в '
+                                                      f' уроки вы сможете вместе, ведь начнете вы в '
                                                       f'<b><u>{hour_group_friend_first_hour[0]}</u></b>, а закончите в '
                                                       f'<b><u>{hour_group_friend_last_hour[-1]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/happy.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoHappy, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ##########
                 else:
                     bot.send_message(message.chat.id, f'Да, вы сможете уйти вместе с другом. Но пойти на'
                                                       f' уроки вместе не сможете. Вы закончите в'
                                                       f' <b><u>{hour_group_friend_last_hour[-1]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/happy.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoHappy, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ########
             else:
                 if hour_group_user_first_hour[0] == hour_group_friend_first_hour[0]:
                     bot.send_message(message.chat.id,
@@ -1318,110 +1341,111 @@ def quit_rezult(message, name_group):
                                      f' Но пойти на уроки вместе можете, ведь начинаете вы в '
                                      f'<b><u>{hour_group_friend_first_hour[0]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ############
                 else:
-                    bot.send_message(message.chat.id, f'К сожалению, вы не сможете уйти вместе и пойти вместе с другом.',
+                    bot.send_message(message.chat.id,
+                                     f'К сожалению, вы не сможете уйти вместе и пойти вместе с другом.',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ##########
     elif message.text == 'Чт-2':
-        hour_group_user_last_hour = []
-        hour_group_friend_last_hour = []
-        hour_group_user_first_hour = []
-        hour_group_friend_first_hour = []
         hour_group_user_last_hour = times_db('ЧЕТВЕРГ', '2', message.from_user.id)
         hour_group_friend_last_hour = times_db_friend('ЧЕТВЕРГ', '2', name_group)
         hour_group_user_first_hour = times_db_first('ЧЕТВЕРГ', '2', message.from_user.id)
         hour_group_friend_first_hour = times_db_friend_first('ЧЕТВЕРГ', '2', name_group)
-        murkup_quit_home_menu = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        quit_menu = types.KeyboardButton('Меню')
-        murkup_quit_home_menu.add(quit_menu)
-        hour_user_items = []
-        time_begin_lesson = ['8:30', '10:10', '11:50', '13:40', '15:20', '17:00']
-        time_end_lesson = ['10:00', '11:40', '13:20', '15:10', '16:50', '18:30']
-        hour = ['1-2', '3-4', '5-6', '7-8', '9-10', '11-12']
-        # last_user
-        for i in range(0, len(hour_group_user_last_hour)):
-            for y in range(0, len(hour)):
-                if hour_group_user_last_hour[i] == hour[y]:
-                    hour_user_items.append(hour.index(hour[y]))
-        hour_group_user_last_hour = []
-        for i in range(0, len(hour_user_items)):
-            hour_group_user_last_hour.append(time_end_lesson[hour_user_items[i]])
-        # begin_user
-        hour_user_items = []
-        for i in range(0, len(hour_group_user_first_hour)):
-            for y in range(0, len(hour)):
-                if hour_group_user_first_hour[i] == hour[y]:
-                    hour_user_items.append(hour.index(hour[y]))
-        hour_group_user_first_hour = []
-        for i in range(0, len(hour_user_items)):
-            hour_group_user_first_hour.append(time_begin_lesson[hour_user_items[i]])
-        hour_user_items = []
-        # last_friend
-        for i in range(0, len(hour_group_friend_last_hour)):
-            for y in range(0, len(hour)):
-                if hour_group_friend_last_hour[i] == hour[y]:
-                    hour_user_items.append(hour.index(hour[y]))
-        hour_group_friend_last_hour = []
-        for i in range(0, len(hour_user_items)):
-            hour_group_friend_last_hour.append(time_end_lesson[hour_user_items[i]])
-        # begin_friend
-        hour_user_items = []
-        for i in range(0, len(hour_group_friend_first_hour)):
-            for y in range(0, len(hour)):
-                if hour_group_friend_first_hour[i] == hour[y]:
-                    hour_user_items.append(hour.index(hour[y]))
-        hour_group_friend_first_hour = []
-        for i in range(0, len(hour_user_items)):
-            hour_group_friend_first_hour.append(time_begin_lesson[hour_user_items[i]])
-        if len(hour_group_user_last_hour) == 0 and len(hour_group_friend_last_hour) > 0:
-            bot.send_message(message.chat.id, f'К сожалению, вы не уйдете вместе, ты не учишься в этот день,'
-                                              f' а твой друг закончит в '
-                                              f'<b><u>{hour_group_friend_last_hour[-1]}</u></b>.\n'
-                                              f'Не грустите, может в другой раз😎', parse_mode='html')
-            bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
-        elif len(hour_group_friend_last_hour) == 0 and len(hour_group_user_last_hour) == 0:
-            bot.send_message(message.chat.id, f'Сегодня ни ты, ни твой друг не учитесь!\n'
-                                              f'🎉🎉🎉🎉🎉', parse_mode='html',
-                             reply_markup=murkup_quit_home_menu)
-        elif len(hour_group_friend_last_hour) == 0 and len(hour_group_user_last_hour) > 0:
-            bot.send_message(message.chat.id, f'К сожалению, вы не уйдете вместе, ты закончишь в '
-                                              f'<b><u>{hour_group_user_last_hour[-1]}</u></b>,'
-                                              f' а твой друг сегодня не учится.\n'
-                                              f'Не грустите, может в другой раз😎', parse_mode='html')
-            bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
-        elif len(hour_group_friend_last_hour) > 0 and len(hour_group_user_last_hour) > 0:
-            if hour_group_user_last_hour[-1] == hour_group_friend_last_hour[-1]:
-                if hour_group_user_first_hour[0] == hour_group_friend_first_hour[0]:
-                    bot.send_message(message.chat.id, f'Да, вы сможете уйти вместе с другом. Но и пойти на'
-                                                      f' уроки вы сможете вместе, ведь начинаете вы в '
-                                                      f'<b><u>{hour_group_friend_first_hour[0]}</u></b>, а закончите в '
-                                                      f'<b><u>{hour_group_friend_last_hour[-1]}</u></b>😎',
-                                     parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/happy.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
-                else:
-                    bot.send_message(message.chat.id, f'Да, вы сможете уйти вместе с другом. Но пойти на'
-                                                      f' уроки вместе не сможете. Вы закончите в'
-                                                      f' <b><u>{hour_group_friend_last_hour[-1]}</u></b>.😎',
-                                     parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/happy.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+    murkup_quit_home_menu = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    quit_menu = types.KeyboardButton('Меню')
+    murkup_quit_home_menu.add(quit_menu)
+    hour_user_items = []
+    time_begin_lesson = ['8:30', '10:10', '11:50', '13:40', '15:20', '17:00']
+    time_end_lesson = ['10:00', '11:40', '13:20', '15:10', '16:50', '18:30']
+    hour = ['1-2', '3-4', '5-6', '7-8', '9-10', '11-12']
+    # last_user
+    for i in range(0, len(hour_group_user_last_hour)):
+        for y in range(0, len(hour)):
+            if hour_group_user_last_hour[i] == hour[y]:
+                hour_user_items.append(hour.index(hour[y]))
+    hour_group_user_last_hour = []
+    for i in range(0, len(hour_user_items)):
+        hour_group_user_last_hour.append(time_end_lesson[hour_user_items[i]])
+    # begin_user
+    hour_user_items = []
+    for i in range(0, len(hour_group_user_first_hour)):
+        for y in range(0, len(hour)):
+            if hour_group_user_first_hour[i] == hour[y]:
+                hour_user_items.append(hour.index(hour[y]))
+    hour_group_user_first_hour = []
+    for i in range(0, len(hour_user_items)):
+        hour_group_user_first_hour.append(time_begin_lesson[hour_user_items[i]])
+    hour_user_items = []
+    # last_friend
+    for i in range(0, len(hour_group_friend_last_hour)):
+        for y in range(0, len(hour)):
+            if hour_group_friend_last_hour[i] == hour[y]:
+                hour_user_items.append(hour.index(hour[y]))
+    hour_group_friend_last_hour = []
+    for i in range(0, len(hour_user_items)):
+        hour_group_friend_last_hour.append(time_end_lesson[hour_user_items[i]])
+    # begin_friend
+    hour_user_items = []
+    for i in range(0, len(hour_group_friend_first_hour)):
+        for y in range(0, len(hour)):
+            if hour_group_friend_first_hour[i] == hour[y]:
+                hour_user_items.append(hour.index(hour[y]))
+    hour_group_friend_first_hour = []
+    for i in range(0, len(hour_user_items)):
+        hour_group_friend_first_hour.append(time_begin_lesson[hour_user_items[i]])
+    if len(hour_group_user_last_hour) == 0 and len(hour_group_friend_last_hour) > 0:
+        bot.send_message(message.chat.id, f'К сожалению, вы не уйдете вместе, ты не учишься в этот день,'
+                                          f' а твой друг закончит в '
+                                          f'<b><u>{hour_group_friend_last_hour[-1]}</u></b>.\n'
+                                          f'Не грустите, может в другой раз😎', parse_mode='html')
+        bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                       reply_markup=murkup_quit_home_menu)  ############################################
+    elif len(hour_group_friend_last_hour) == 0 and len(hour_group_user_last_hour) == 0:
+        bot.send_message(message.chat.id, f'Сегодня ни ты, ни твой друг не учитесь!\n'
+                                          f'🎉🎉🎉🎉🎉', parse_mode='html',
+                         reply_markup=murkup_quit_home_menu)
+    elif len(hour_group_friend_last_hour) == 0 and len(hour_group_user_last_hour) > 0:
+        bot.send_message(message.chat.id, f'К сожалению, вы не уйдете вместе, ты закончишь в '
+                                          f'<b><u>{hour_group_user_last_hour[-1]}</u></b>,'
+                                          f' а твой друг сегодня не учится.\n'
+                                          f'Не грустите, может в другой раз😎', parse_mode='html')
+        bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                       reply_markup=murkup_quit_home_menu)  ###################################
+    elif len(hour_group_friend_last_hour) > 0 and len(hour_group_user_last_hour) > 0:
+        if hour_group_user_last_hour[-1] == hour_group_friend_last_hour[-1]:
+            if hour_group_user_first_hour[0] == hour_group_friend_first_hour[0]:
+                bot.send_message(message.chat.id, f'Да, вы сможете уйти вместе с другом. Но и пойти на'
+                                                  f' уроки вы сможете вместе, ведь начнете вы в '
+                                                  f'<b><u>{hour_group_friend_first_hour[0]}</u></b>, а закончите в '
+                                                  f'<b><u>{hour_group_friend_last_hour[-1]}</u></b>😎',
+                                 parse_mode='html')
+                bot.send_photo(message.chat.id, photo=open(photoHappy, 'rb'),
+                               reply_markup=murkup_quit_home_menu)  ##########
             else:
-                if hour_group_user_first_hour[0] == hour_group_friend_first_hour[0]:
-                    bot.send_message(message.chat.id,
-                                     f'К сожалению, вы не сможете уйти вместе с другом.'
-                                     f' Но пойти на уроки вместе можете, ведь начинаете вы в '
-                                     f'<b><u>{hour_group_friend_first_hour[0]}</u></b>😎',
-                                     parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
-                else:
-                    bot.send_message(message.chat.id, f'К сожалению, вы не сможете уйти вместе и пойти вместе с другом.',
-                                     parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                bot.send_message(message.chat.id, f'Да, вы сможете уйти вместе с другом. Но пойти на'
+                                                  f' уроки вместе не сможете. Вы закончите в'
+                                                  f' <b><u>{hour_group_friend_last_hour[-1]}</u></b>😎',
+                                 parse_mode='html')
+                bot.send_photo(message.chat.id, photo=open(photoHappy, 'rb'),
+                               reply_markup=murkup_quit_home_menu)  ########
+        else:
+            if hour_group_user_first_hour[0] == hour_group_friend_first_hour[0]:
+                bot.send_message(message.chat.id,
+                                 f'К сожалению, вы не сможете уйти вместе с другом.'
+                                 f' Но пойти на уроки вместе можете, ведь начинаете вы в '
+                                 f'<b><u>{hour_group_friend_first_hour[0]}</u></b>😎',
+                                 parse_mode='html')
+                bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                               reply_markup=murkup_quit_home_menu)  ############
+            else:
+                bot.send_message(message.chat.id, f'К сожалению, вы не сможете уйти вместе и пойти вместе с другом.',
+                                 parse_mode='html')
+                bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                               reply_markup=murkup_quit_home_menu)  ##########
     elif message.text == 'Пт-2':
-        hour_group_user_last_hour = []
-        hour_group_friend_last_hour = []
-        hour_group_user_first_hour = []
-        hour_group_friend_first_hour = []
         hour_group_user_last_hour = times_db('ПЯТНИЦА', '2', message.from_user.id)
         hour_group_friend_last_hour = times_db_friend('ПЯТНИЦА', '2', name_group)
         hour_group_user_first_hour = times_db_first('ПЯТНИЦА', '2', message.from_user.id)
@@ -1473,7 +1497,8 @@ def quit_rezult(message, name_group):
                                               f' а твой друг закончит в '
                                               f'<b><u>{hour_group_friend_last_hour[-1]}</u></b>.\n'
                                               f'Не грустите, может в другой раз😎', parse_mode='html')
-            bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+            bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                           reply_markup=murkup_quit_home_menu)  ############################################
         elif len(hour_group_friend_last_hour) == 0 and len(hour_group_user_last_hour) == 0:
             bot.send_message(message.chat.id, f'Сегодня ни ты, ни твой друг не учитесь!\n'
                                               f'🎉🎉🎉🎉🎉', parse_mode='html',
@@ -1483,22 +1508,25 @@ def quit_rezult(message, name_group):
                                               f'<b><u>{hour_group_user_last_hour[-1]}</u></b>,'
                                               f' а твой друг сегодня не учится.\n'
                                               f'Не грустите, может в другой раз😎', parse_mode='html')
-            bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+            bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                           reply_markup=murkup_quit_home_menu)  ###################################
         elif len(hour_group_friend_last_hour) > 0 and len(hour_group_user_last_hour) > 0:
             if hour_group_user_last_hour[-1] == hour_group_friend_last_hour[-1]:
                 if hour_group_user_first_hour[0] == hour_group_friend_first_hour[0]:
                     bot.send_message(message.chat.id, f'Да, вы сможете уйти вместе с другом. Но и пойти на'
-                                                      f' уроки вы сможете вместе, ведь начинаете вы в '
+                                                      f' уроки вы сможете вместе, ведь начнете вы в '
                                                       f'<b><u>{hour_group_friend_first_hour[0]}</u></b>, а закончите в '
                                                       f'<b><u>{hour_group_friend_last_hour[-1]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/happy.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoHappy, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ##########
                 else:
                     bot.send_message(message.chat.id, f'Да, вы сможете уйти вместе с другом. Но пойти на'
                                                       f' уроки вместе не сможете. Вы закончите в'
                                                       f' <b><u>{hour_group_friend_last_hour[-1]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/happy.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoHappy, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ########
             else:
                 if hour_group_user_first_hour[0] == hour_group_friend_first_hour[0]:
                     bot.send_message(message.chat.id,
@@ -1506,16 +1534,15 @@ def quit_rezult(message, name_group):
                                      f' Но пойти на уроки вместе можете, ведь начинаете вы в '
                                      f'<b><u>{hour_group_friend_first_hour[0]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ############
                 else:
-                    bot.send_message(message.chat.id, f'К сожалению, вы не сможете уйти вместе и пойти вместе с другом.',
+                    bot.send_message(message.chat.id,
+                                     f'К сожалению, вы не сможете уйти вместе и пойти вместе с другом.',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ##########
     elif message.text == 'Сб-2':
-        hour_group_user_last_hour = []
-        hour_group_friend_last_hour = []
-        hour_group_user_first_hour = []
-        hour_group_friend_first_hour = []
         hour_group_user_last_hour = times_db('СУББОТА', '2', message.from_user.id)
         hour_group_friend_last_hour = times_db_friend('СУББОТА', '2', name_group)
         hour_group_user_first_hour = times_db_first('СУББОТА', '2', message.from_user.id)
@@ -1567,7 +1594,8 @@ def quit_rezult(message, name_group):
                                               f' а твой друг закончит в '
                                               f'<b><u>{hour_group_friend_last_hour[-1]}</u></b>.\n'
                                               f'Не грустите, может в другой раз😎', parse_mode='html')
-            bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+            bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                           reply_markup=murkup_quit_home_menu)  ############################################
         elif len(hour_group_friend_last_hour) == 0 and len(hour_group_user_last_hour) == 0:
             bot.send_message(message.chat.id, f'Сегодня ни ты, ни твой друг не учитесь!\n'
                                               f'🎉🎉🎉🎉🎉', parse_mode='html',
@@ -1577,22 +1605,25 @@ def quit_rezult(message, name_group):
                                               f'<b><u>{hour_group_user_last_hour[-1]}</u></b>,'
                                               f' а твой друг сегодня не учится.\n'
                                               f'Не грустите, может в другой раз😎', parse_mode='html')
-            bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+            bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                           reply_markup=murkup_quit_home_menu)  ###################################
         elif len(hour_group_friend_last_hour) > 0 and len(hour_group_user_last_hour) > 0:
             if hour_group_user_last_hour[-1] == hour_group_friend_last_hour[-1]:
                 if hour_group_user_first_hour[0] == hour_group_friend_first_hour[0]:
                     bot.send_message(message.chat.id, f'Да, вы сможете уйти вместе с другом. Но и пойти на'
-                                                      f' уроки вы сможете вместе, ведь начинаете вы в '
+                                                      f' уроки вы сможете вместе, ведь начнете вы в '
                                                       f'<b><u>{hour_group_friend_first_hour[0]}</u></b>, а закончите в '
                                                       f'<b><u>{hour_group_friend_last_hour[-1]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/happy.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoHappy, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ##########
                 else:
                     bot.send_message(message.chat.id, f'Да, вы сможете уйти вместе с другом. Но пойти на'
                                                       f' уроки вместе не сможете. Вы закончите в'
                                                       f' <b><u>{hour_group_friend_last_hour[-1]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/happy.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoHappy, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ########
             else:
                 if hour_group_user_first_hour[0] == hour_group_friend_first_hour[0]:
                     bot.send_message(message.chat.id,
@@ -1600,12 +1631,14 @@ def quit_rezult(message, name_group):
                                      f' Но пойти на уроки вместе можете, ведь начинаете вы в '
                                      f'<b><u>{hour_group_friend_first_hour[0]}</u></b>😎',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
+                    bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ############
                 else:
-                    bot.send_message(message.chat.id, f'К сожалению, вы не сможете уйти вместе и пойти вместе с другом.',
+                    bot.send_message(message.chat.id,
+                                     f'К сожалению, вы не сможете уйти вместе и пойти вместе с другом.',
                                      parse_mode='html')
-                    bot.send_photo(message.chat.id, photo=open('C:/Users/Anastasia/Desktop/algorithm-master/sed.jpg', 'rb'), reply_markup=murkup_quit_home_menu)  ########
-
+                    bot.send_photo(message.chat.id, photo=open(photoSed, 'rb'),
+                                   reply_markup=murkup_quit_home_menu)  ##########
 
 
 
